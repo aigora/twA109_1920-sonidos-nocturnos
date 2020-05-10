@@ -116,13 +116,13 @@ void TABLERO (void)
 int main()
 {
 	OcultarCursor();
-	printf ("\n \n \n \n Space Invaders \n \n \n \n");
+	printf ("\n Space Invaders\n");
 	Sleep(2000);
-	printf ("\n \n \n \n Preparado para salvar la galaxia?! \n \n \n \n");
+	printf ("\n Preparado para salvar la galaxia?! \n");
 	Sleep(2000);
 	getch ();
 	TABLERO();
-	NAVE USER(30,54);
+	NAVE USER(30,42);
 	USER.pintar();
 	
 	// introduzco ahora variable logica para que la funcion de movimiento
