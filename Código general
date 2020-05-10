@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <windows.h>
+#include<conio.h>
+#include<stdlib.h>
+#define LIMIZ 40
+#define LIMDER 40
+
+
+//funciones
+
+
+
+int main(void)
+{
+	
+	
+	//menu
+		
+	
+	
+}
