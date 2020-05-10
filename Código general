@@ -2,20 +2,142 @@
 #include <windows.h>
 #include<conio.h>
 #include<stdlib.h>
-#define LIMIZ 40
-#define LIMDER 40
+#define LIMIZ 1
+#define LIMDER 42
+#define FILAS 40
+#define COLUM 40
+//introduzco la funcion de movimiento, en la cual introducimos la funcion SetConsolePosition para controlar la posicion en pantalla
 
-
-//funciones
-
-
-
-int main(void)
+void gotoxy (int x,int y) //con la funcion gotoxy establecemos unas coordenadas introducidas por nosotros
 {
+	HANDLE hCon;
+	hCon = GetStdHandle (STD_OUTPUT_HANDLE);
 	
+	COORD dwPos; //estructura coordenada
+	dwPos.X=x;
+	dwPos.Y=y;
 	
-	//menu
+
+	SetConsoleCursorPosition (hCon,dwPos);	
+}
+
+void OcultarCursor()//con esto quitamos el molesto cursor que espera letras a introducir
+{
+	HANDLE hCon;
+	hCon = GetStdHandle (STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO cci;	//estructura del cursor
+	cci.dwSize=50;
+	cci.bVisible=FALSE;
 		
+	SetConsoleCursorInfo(hCon,&cci);
+}
+class NAVE //introducimos el tipo de elemento nave
+{
+	int x,y;
+public:
+	NAVE(int _x,int _y): x(_x),y(_y){}
+	void pintar();
+	void borrar();
+	void mover();
+
+
+};
+
+
+void NAVE::pintar()
+{
+	gotoxy(x,y); printf("  A");
+	gotoxy(x,y+1); printf(" wHw");
+	gotoxy(x,y+2); printf("WWHWW");
+	
+}
+
+void NAVE::borrar()//para que la nave no deje una estela 
+{
+	gotoxy(x,y); printf("     ");
+	gotoxy(x,y+1); printf("     ");
+	gotoxy(x,y+2); printf("     ");
 	
 	
+}
+
+void NAVE::mover()
+{
+//con kbhit comprobamos si el jugador ha pulsado una letra
+		if(kbhit())
+		{
+			char tecla=getch();
+			borrar();
+			if((tecla=='a'or tecla=='A')and x>LIMIZ ) x--;
+			if((tecla=='d'or tecla=='D')and x+6<LIMDER)x++;
+	//Pensaremos si mover vertical o no		if(tecla=='s'or tecla=='S') y++;
+	//			if(tecla=='w'or tecla=='W')y--;
+			pintar();
+			}
+}
+
+void TABLERO (void)
+{
+ 	int i,j;	
+	for(i=0;i<=FILAS+1;i++) {
+		if (i==0) {
+			printf ("%c",201);
+		} else if (i==FILAS+1) {
+			printf ("%c",187);
+		} else {
+			printf ("%c",205);
+		}
+	}
+	printf ("\n");
+	
+	for (i=0;i<COLUM;i++) {
+		printf("%c",186);
+		for (j=0;j<COLUM;j++) {
+			if (j==COLUM-1) {
+				printf (" %c \n",186);
+			} else {
+				printf (" ");
+			}
+		}
+	}
+	
+	for (i=0;i<=FILAS+1;i++) {
+		if(i==0) {
+			printf ("%c",200);
+		} else if (i==FILAS+1) {
+			printf("%c",188);
+		} else {
+			printf ("%c",205);
+		}
+	}
+
+}
+
+int main()
+{
+	OcultarCursor();
+	printf ("\n \n \n \n Space Invaders \n \n \n \n");
+	Sleep(2000);
+	printf ("\n \n \n \n Preparado para salvar la galaxia?! \n \n \n \n");
+	Sleep(2000);
+	getch ();
+	TABLERO();
+	NAVE USER(30,54);
+	USER.pintar();
+	
+	// introduzco ahora variable logica para que la funcion de movimiento
+	//se ejecute hasta que muramos
+	bool game_over = false;
+	
+	while(!game_over)
+	{	
+	USER.mover();
+
+			Sleep(20);
+	
+		
+	}
+	
+	
+	return 0;
 }
