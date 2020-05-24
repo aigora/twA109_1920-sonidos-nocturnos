@@ -2,10 +2,6 @@
 #include <windows.h>
 #include<conio.h>
 #include<stdlib.h>
-#define LIMIZ 2
-#define LIMDER 43
-#define SIZE_X 40
-#define SIZE_Y 40
 
 //introduzco la funcion de movimiento, en la cual introducimos la funcion SetConsolePosition para controlar la posicion en pantalla
 
@@ -32,16 +28,41 @@ void OcultarCursor()//con esto quitamos el molesto cursor que espera letras a in
 		
 	SetConsoleCursorInfo(hCon,&cci);
 }
-class NAVE //introducimos el tipo de elemento nave
-{
-	int x,y;
+
+void pintar_limites (){
+	for(int i = 2 ; i<78 ; i++) {
+		gotoxy (i,3); printf ("%c", 205);
+		gotoxy (i,33); printf ("%c",205);
+	
+
+	}
+	
+	for(int i=4 ; i< 33; i++){
+		gotoxy (2,i); printf ("%c",186);
+		gotoxy (77,i); printf ("%c",186);
+	}
+	
+	gotoxy (2,3); printf("%c",201);
+	gotoxy (2,33); printf("%c",200);
+	gotoxy (77,3); printf("%c",187);
+	gotoxy (77,33); printf("%c",188);	
+
+
+	
+}
+
+
+class NAVE{
+    int x,y;
+    int corazones;
 public:
-	NAVE(int _x,int _y): x(_x),y(_y){}
-	void pintar();
-	void borrar();
-	void mover();
-
-
+    NAVE(int _x, int _y , int _corazones ): x( _x), y(_y), corazones(_corazones){}
+    
+    void pintar();
+    void borrar();
+    void mover();
+    void pintar_corazones ();
+    void morir();//se crea funcion
 };
 
 
@@ -49,8 +70,7 @@ void NAVE::pintar()
 {
 	gotoxy(x,y); printf("  A");
 	gotoxy(x,y+1); printf(" wHw");
-	gotoxy(x,y+2); printf("WWHWW");
-	
+	gotoxy(x,y+2); printf("WWHWW");	
 }
 
 void NAVE::borrar()//para que la nave no deje una estela 
@@ -62,128 +82,51 @@ void NAVE::borrar()//para que la nave no deje una estela
 	
 }
 
-void NAVE::mover()
-{
-//con kbhit comprobamos si el jugador ha pulsado una letra
-		if(kbhit())
-		{
-			char tecla=getch();
-			borrar();
-			if((tecla=='a'or tecla=='A')and x>LIMIZ ) x--;
-			if((tecla=='d'or tecla=='D')and x+6<LIMDER)x++;
-	//Pensaremos si mover vertical o no		if(tecla=='s'or tecla=='S') y++;
-	//			if(tecla=='w'or tecla=='W')y--;
-			pintar();
-			}
-}
-
-/*void TABLERO (void)
-{
- 	int i,j;	
-	for(i=0;i<=FILAS+1;i++) {
-		if (i==0) {
-			printf ("%c",201);
-		} else if (i==FILAS+1) {
-			printf ("%c",187);
-		} else {
-			printf ("%c",205);
-		}
-	}
-	printf ("\n");
-	
-	for (i=0;i<COLUM;i++) {
-		printf("%c",186);
-		for (j=0;j<COLUM;j++) {
-			if (j==COLUM-1) {
-				printf (" %c \n",186);
-			} else {
-				printf (" ");
-			}
-		}
-	}
-	
-	for (i=0;i<=FILAS+1;i++) {
-		if(i==0) {
-			printf ("%c",200);
-		} else if (i==FILAS+1) {
-			printf("%c",188);
-		} else {
-			printf ("%c",205);
-		}
-	}
-
-}
-*/
-void ENEMIGOS (void)
-{
-
- char enemigo = 'M';
-    char enemigo_escudo = 'X';
-    int total_enemigos = 0;
-    char mundo[SIZE_X][SIZE_Y];
-    int x, y;
+void NAVE::mover(){  //aqui se repara el código para que la nave no sobrepase los limites
+    if (kbhit()){
     
-    for (x = 0; x < SIZE_X; x ++)
-    {
-        for (y = 0; y < SIZE_Y; y ++) 
-            {
-               if ((y+1) % 2 == 0 && y < 7 && x > 4 && x < SIZE_X - 5 && x % 2 ==0)
-                         {
-                           mundo[y][x] = enemigo;
-                           //total_enemigos ++;
-                         }
-                         
-            else
-                if ((y+1) % 2 == 0 && y >= 7 && y < 9 && x > 4 && x < SIZE_X - 5 && x % 2 ==0)
-                   {
-                mundo[y][x] = enemigo_escudo;
-                //total_enemigos = total_enemigos + 2;
-                    }
-                else
-                    {
-                     mundo[y][x] = ' ';
-                    }
+    char tecla = getch();
+                borrar();
+                if((tecla=='a'or tecla=='A' && x>3)and x> 3)x--;
+			if((tecla=='d'or tecla=='D' && x+6 < 77)and x+6 < 77)x++;
+			if (tecla == 'e')corazones--;
+                pintar();
+                pintar_corazones ();
+              
             }
-    }
-   
+}
 
-        printf("\n");
-            for (y = 0; y < SIZE_Y ; y ++)
-            {
-                printf (" %c",186);
-                for (x = 0; x < SIZE_X ; x ++)
-                {
-                    printf("%c",mundo[y][x]);
-                }
-                printf("%c",186);
-            printf("\n");
-            }
+void NAVE::pintar_corazones (){
+	
+	gotoxy(64,2); printf("Salud");
+	gotoxy(70,2); printf("      ");
+	for (int i=0; i< corazones; i++){
+		
+		gotoxy (70+i,2); printf ("%c",3);
+	}
 }
 int main()
 {
-	
-	printf ("\n Space Invaders\n");
-	Sleep(2000);
-	printf ("\n Preparado para salvar la galaxia?! \n");
-	Sleep(2000);
-	getch ();
-	ENEMIGOS ();
 	OcultarCursor();
-	NAVE USER(30,42);
+	pintar_limites ();
+	NAVE USER(30,30,3);
 	USER.pintar();
-	
+	USER.pintar_corazones ();
+
 	// introduzco ahora variable logica para que la funcion de movimiento
 	//se ejecute hasta que muramos
 	bool game_over = false;
-	
 	while(!game_over)
 	{	
+	
+	
 	USER.mover();
 
 			Sleep(20);
 	
 		
 	}
+	
 	
 	
 	return 0;
