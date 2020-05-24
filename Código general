@@ -58,7 +58,13 @@ class NAVE{
     int vidas;
 public:
     NAVE(int _x, int _y , int _corazones, int _vidas ): x( _x), y(_y), corazones(_corazones), vidas(_vidas){}
-    
+    int X()
+        {return x;}
+        
+    int Y()
+        {return y;}
+        
+    void CORAZON() {corazones--;}
     void pintar();
     void borrar();
     void mover();
@@ -142,7 +148,7 @@ public:
 	MALOS(int _x,int _y):x(_x),y(_y){}
 	void pintar();
 	void mover();
-	
+	void colision(class NAVE &USER);
 	
 };
 
@@ -161,6 +167,20 @@ void MALOS::mover(){
 	pintar();
 }
 
+void MALOS::colision(class NAVE &USER){
+    if (x >= USER.X() && x <= USER.X()+5 && y >= USER.Y() && y <= USER.Y()+2)  //Comprobamos si las coordenadas del enemigo son las mismas que las de la nave
+    {
+        USER.CORAZON();
+        USER.pintar(); //Para que no se borre parte de la nave cuando choca con un enemigo
+        
+        x=rand()%71 + 4;//El enemigo vuelve arriba
+		y=4;
+         }
+}
+
+
+
+
 int main()
 {
 	OcultarCursor();
@@ -168,18 +188,22 @@ int main()
 	NAVE USER(30,30,3,3);
 	USER.pintar();
 	USER.pintar_corazones ();
-
-	MALOS malos(10,4);
+    
+	MALOS malos1(10,4), malos2(5,10), malos3(15,6); //Creamos los enemigos que van a ir cayendo
+	
 	// introduzco ahora variable logica para que la funcion de movimiento
 	//se ejecute hasta que muramos
 	bool game_over = false;
 	while(!game_over)
 	{	
-	malos.mover();
-	USER.morir();
-	USER.mover();
+	  malos1.mover(); malos1.colision(USER);
+      malos2.mover(); malos2.colision(USER);
+	  malos3.mover(); malos3.colision(USER);
+	
+	  USER.morir();
+      USER.mover();
 
-			Sleep(20);
+      Sleep(20);
 	
 		
 	}
