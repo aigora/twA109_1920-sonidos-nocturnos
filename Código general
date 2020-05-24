@@ -66,7 +66,7 @@ public:
         
     int Y()
         {return y;}
-        
+    int VIDAS() {return vidas;}    
     void CORAZON() {corazones--;}
     void pintar();
     void borrar();
@@ -152,7 +152,8 @@ public:
 	void pintar();
 	void mover();
 	void colision(class NAVE &USER);
-	
+	int X () {return x;}
+	int Y () {return y;}
 };
 
 void MALOS::pintar(){
@@ -176,7 +177,7 @@ void MALOS::colision(class NAVE &USER){
         USER.CORAZON();
         USER.pintar(); //Para que no se borre parte de la nave cuando choca con un enemigo
         
-        x=rand()%71 + 4;//El enemigo vuelve arriba
+        x=rand()%71 + 4;//El enemigo vuelve a salir por arriba
 		y=4;
 		
          }
@@ -215,11 +216,11 @@ int main()
 	USER.pintar();
 	USER.pintar_corazones ();
     
-	list<MALOS*>A;//Creamos los enemigos que van a ir cayendo
-	list<MALOS*>::iterator itA;
+	list<MALOS*>M;//Creamos los enemigos que van a ir cayendo
+	list<MALOS*>::iterator itM;
 	for(int i=0;i<5;i++){
 		
-		A.push_back(new MALOS(rand()%75 + 3, rand()%5 + 4));
+		M.push_back(new MALOS(rand()%75 + 3, rand()%5 + 4));
 	}
 	
 	
@@ -229,10 +230,11 @@ int main()
 	// introduzco ahora variable logica para que la funcion de movimiento
 	//se ejecute hasta que muramos
 	bool game_over = false;
+	int puntos = 0; //Variable donde se va a guardar la puntuación
 	while(!game_over)
 	{	
 	
-	
+	  gotoxy(4,2); printf("Puntos %d",puntos); //Imprimimos la puntuación del usuario
 	//se establecen los comandos para disparar
 	if(kbhit())
 	{
@@ -260,23 +262,42 @@ int main()
 		}
 	}
 	
-	for (itA=A.begin() ; itA!=A.end() ; itA++) {
-		(*itA)->mover();
-		(*itA)->colision(USER);	
+	for (itM=M.begin() ; itM!=M.end() ; itM++) {
+		(*itM)->mover();
+		(*itM)->colision(USER);	
 		
 		
 	}	
-
-	
-	  USER.morir();
-      USER.mover();
-
-      Sleep(20);
+    for (itM=M.begin() ; itM!=M.end() ; itM++)
+    {
+        for (it = B.begin(); it != B.end(); it++)
+        {
+            if ((*itM)->X() == (*it)-> X() && (*itM)->Y() +1 == (*it)->Y() || (*it)-> X() && (*itM)->Y() == (*it)->Y()) //Si colisonan bala y enemigo
+            {
+                gotoxy ((*it)->X(), (*it)->Y()); printf (" "); //Borramos la bala
+                delete (*it); //Borramos el iterador de la bala que colisionó
+                it = B.erase(it);
+                
+                M.push_back(new MALOS(rand()%74 + 3, 4)); //Ponemos el nuevo enemigo
+                gotoxy ((*itM)->X(), (*itM)->Y()); printf (" ");  //Borramos al enemigo
+                delete(*itM);
+                itM = M.erase(itM);
+                
+                puntos+=50; //Cada vez que hay una colisión (matamos a un enemigo) nos da 50 ptos
+            }
+        }
+    }
+        if (USER.VIDAS() == 0) game_over = true;
+	    USER.morir();
+        USER.mover();
+      
+        Sleep(40);
 	
 		
 	}
-	
-	
-	
+     
+	system ("cls");
+	gotoxy (32,20); printf ("GAME OVER\n");
+	system ("PAUSE");
 	return 0;
 }
