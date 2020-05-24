@@ -2,6 +2,8 @@
 #include <windows.h>
 #include<conio.h>
 #include<stdlib.h>
+#include <list>
+using namespace std;
 
 //introduzco la funcion de movimiento, en la cual introducimos la funcion SetConsolePosition para controlar la posicion en pantalla
 
@@ -175,10 +177,24 @@ void MALOS::colision(class NAVE &USER){
         
         x=rand()%71 + 4;//El enemigo vuelve arriba
 		y=4;
+		
          }
+
 }
 
 
+class BALA{
+	int x,y;
+public:
+		BALA (int _x , int _y) : x(_x), y(_y) {}
+		void mover ();
+};
+
+void BALA::mover () {
+	gotoxy(x,y); printf ("  ");
+	if (y > 4) y--;
+	gotoxy (x,y); printf ("*");
+}
 
 
 int main()
@@ -191,11 +207,30 @@ int main()
     
 	MALOS malos1(10,4), malos2(5,10), malos3(15,6); //Creamos los enemigos que van a ir cayendo
 	
+	list<BALA*> B;
+	list<BALA*>::iterator it;
+	
 	// introduzco ahora variable logica para que la funcion de movimiento
 	//se ejecute hasta que muramos
 	bool game_over = false;
 	while(!game_over)
 	{	
+	
+	
+	//se establecen los comandos para disparar
+	if(kbhit())
+	{
+		char tecla = getch();
+		if (tecla == 'w')
+		B.push_back (new BALA(USER.X () + 2, USER.Y () - 1));
+	}
+	
+	for (it = B.begin(); it != B.end(); it++)
+	{
+		(*it)->mover();
+	}
+	
+	
 	  malos1.mover(); malos1.colision(USER);
       malos2.mover(); malos2.colision(USER);
 	  malos3.mover(); malos3.colision(USER);
