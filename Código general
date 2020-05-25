@@ -3,6 +3,8 @@
 #include<conio.h>
 #include<stdlib.h>
 #include <list>
+#define L 15
+
 using namespace std;
 
 //en un principio ibamos a poner enemigos fijos, que bajasen cada x tiempo una fila, pero se hacía muy complicado compaginarlo con las funciones que hicimos cada uno por separado
@@ -52,6 +54,42 @@ void pintar_limites (){
 
 
 	
+}
+
+
+void guardar_puntos (int puntos)
+{
+    FILE *fscores;
+    char nombre[L];
+    
+    fflush (stdin);
+    printf ("Nombre del jugador: ");
+    gets (nombre);
+    fscores = fopen ("puntuaciones.txt", "a");
+    
+    if (fscores == NULL)
+        printf("La puntuación no se ha podido guardar correctamente");
+        
+    else
+    {
+        fprintf (fscores, "%s   %d\n\n", nombre, puntos);
+    }
+    fclose (fscores);
+    system("cls");
+    return;
+}
+
+void imprimir_puntos ()
+{
+    
+   FILE *archivo = fopen("puntuaciones.txt", "r");
+	int c;
+	while ((c=fgetc(archivo))!= EOF)
+	{
+		putchar(c);
+	}
+	printf("\n\n\n");
+	return;
 }
 
 
@@ -208,15 +246,29 @@ bool BALA::fuera(){
 	return false;
 }
 
+
+
 int main()
 {
+    
+   
+    gotoxy (30,15); printf("Bienvenido a Space Invaders\n\n\n");
+    gotoxy (30,20);printf("CONTROLES\n");
+    gotoxy (30,23);printf ("Mover la nave a la izquierda - A\n");
+    gotoxy (30,24);printf ("Mover la nave a la derecha - D\n");
+    gotoxy (30,25);printf ("Disparar - Barra espaciadora\n\n\n");
+    
+    gotoxy (30,27);printf ("El juego empezará en breve");
+    Sleep (10000);
+    system ("cls");
+        
 	OcultarCursor();
 	pintar_limites ();
 	NAVE USER(30,30,3,3);
 	USER.pintar();
 	USER.pintar_corazones ();
     
-	list<MALOS*>M;//Creamos los enemigos que van a ir cayendo
+	list<MALOS*>M; //Creamos los enemigos que van a ir cayendo
 	list<MALOS*>::iterator itM;
 	for(int i=0;i<5;i++){
 		
@@ -238,10 +290,6 @@ int main()
 	//se establecen los comandos para disparar
 	if(kbhit())
 	{
-	/*	char tecla = getch();
-		if (tecla == 'w')
-		B.push_back (new BALA(USER.X () + 2, USER.Y () - 1));
-		*/
 		
 	if(kbhit())
             {
@@ -272,12 +320,12 @@ int main()
     {
         for (it = B.begin(); it != B.end(); it++)
         {
-            if ((*itM)->X() == (*it)-> X() && (*itM)->Y() +1 == (*it)->Y() || (*it)-> X() && (*itM)->Y() == (*it)->Y()) //Si colisonan bala y enemigo
+            if ((*itM)->X() == (*it)-> X() && (*itM)->Y() +1 == (*it)->Y() || (*itM)->X() == (*it)-> X() && (*itM)->Y() == (*it)->Y()) //Si colisonan bala y enemigo
             {
                 gotoxy ((*it)->X(), (*it)->Y()); printf (" "); //Borramos la bala
                 delete (*it); //Borramos el iterador de la bala que colisionó
                 it = B.erase(it);
-                
+                 
                 M.push_back(new MALOS(rand()%74 + 3, 4)); //Ponemos el nuevo enemigo
                 gotoxy ((*itM)->X(), (*itM)->Y()); printf (" ");  //Borramos al enemigo
                 delete(*itM);
@@ -298,6 +346,14 @@ int main()
      
 	system ("cls");
 	gotoxy (32,20); printf ("GAME OVER\n");
+	Sleep (2000);
+	system ("cls");
+	
+	gotoxy (32,20); guardar_puntos (puntos);
+	gotoxy (0,10); printf("PUNTUACIONES");
+	gotoxy (0,15);imprimir_puntos();
+
 	system ("PAUSE");
+	
 	return 0;
 }
